@@ -1,0 +1,16 @@
+--cpu=Cortex-M4.fp.sp
+".\objects\clock_and_modes.o"
+".\objects\gpio_config.o"
+".\objects\lpit_config.o"
+".\objects\lpspi_config.o"
+".\objects\main.o"
+".\objects\max7219.o"
+".\objects\uart_config.o"
+".\objects\ftfc.o"
+".\objects\startup.o"
+".\objects\startup_s32k144.o"
+".\objects\system_s32k144.o"
+--strict --scatter "C:\Users\Admin\AppData\Local\Arm\Packs\Keil\S32_SDK_DFP\1.5.0\platform\devices\S32K144\linker\armc\S32K144_64_flash.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\MOCK_EMB.map" -o .\Objects\MOCK_EMB.axf
