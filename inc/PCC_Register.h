@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module PCC
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */
@@ -140,6 +140,9 @@ typedef struct {
 } PCC_Type;
 
 #define PCC_BASE_ADDRS (0x40065000)
+// PCC là con trỏ trỏ tới vùng nhớ nơi chứa các thanh ghi thực tế
+// Chuyển địa chỉ trên thành con trỏ kiểu PCC_Type
+// Từ địa chỉ 0x40065000 trở đi, dữ liệu ở đó có cấu trúc giống kiểu PCC_Type đã định nghĩa ở trên
 #define PCC ((PCC_Type*)PCC_BASE_ADDRS)
 
 

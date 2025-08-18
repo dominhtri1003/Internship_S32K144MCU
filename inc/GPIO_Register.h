@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module GPIO
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */
@@ -37,6 +37,8 @@ typedef struct {
   volatile unsigned int PIDR;
 } GPIO_Type;
 
+// GPIOA: một con trỏ kiểu GPIO_Type trỏ tới địa chỉ GPIOA_BASE_ADDRS
+// GPIOA->PDDR
 #define GPIOA_BASE_ADDRS (0x400FF000)
 #define GPIOA ((GPIO_Type*)GPIOA_BASE_ADDRS)
 

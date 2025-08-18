@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module LPIT
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */

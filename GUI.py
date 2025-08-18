@@ -183,7 +183,7 @@ def disconnect_serial():
 root = tk.Tk()
 root.title("S32K144 Interface")
 
-logo_path = "C:/Intern FSA/DoMinhTri/Do_Minh_Tri_HW/DoMinhTri_Mock_EMB/logo_bachkhoa.png"
+logo_path = "/home/trido/Documents/Fsoft_Intern/logo_bachkhoa.png"
 image = Image.open(logo_path)
 image_resized = image.resize((200, 150), Image.ANTIALIAS)
 photo = ImageTk.PhotoImage(image_resized)

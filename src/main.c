@@ -75,6 +75,11 @@ int main(void)
 	GPIO_Input_Interrupt_Config('C', 13, INTERRUPT_FALLING_EDGE); /* Button2 decrease intensity of LED */
 
 	/* UART1 Config */
+	/**
+	 * Thực tế là 38461.54 bps (~0.16%)
+	 * Ratio = 26
+	 * SBR = 36
+	 */
 	UART1_Interrupt_Config(UART1_C7TX_C6RX, 38400, SPLL_CLK / 4, 8, 1, NO_PARITY);
 
 	/* SPI1 Config */
@@ -140,7 +145,7 @@ void LPUART1_RxTx_IRQHandler(void)
 		receiveBuffer[string_index] = receiveData;
 		string_index++;
 	}
-	if (LPUART1->STAT & 1 << 20) /* Idle */
+	if (LPUART1->STAT & (1 << 20)) /* Idle */
 	{
 		doneReceive = 1;
 		LPUART1->STAT |= 1 << 20; /* Clear Idle flag */
@@ -150,7 +155,8 @@ void LPUART1_RxTx_IRQHandler(void)
 void ProcessReceiveData(void)
 {
 	if (receiveBuffer[0] == 0xAA && receiveBuffer[1] == 0x55 && receiveBuffer[string_index - 1] == 0x75)
-	{
+	{	
+		/* Send data from PC -> S32K144 display day month year */
 		if (receiveBuffer[2] == 0x01)
 		{
 			memcpy(TimeDate_RxBuff, receiveBuffer, strlen(receiveBuffer));
@@ -161,11 +167,13 @@ void ProcessReceiveData(void)
 			month = TimeDate_RxBuff[7];
 			year = TimeDate_RxBuff[8] * 256 + TimeDate_RxBuff[9];
 		}
+		/* Send data from PC -> S32K144 change mode display */
 		else if (receiveBuffer[2] == 0x02)
 		{
 			memcpy(TimeDate_RxBuff, receiveBuffer, strlen(receiveBuffer));
 			DisplayMode = TimeDate_RxBuff[3];
 		}
+		/* Send data from PC -> S32K144 change intensity */
 		else if (receiveBuffer[2] == 0x03)
 		{
 			memcpy(TimeDate_RxBuff, receiveBuffer, strlen(receiveBuffer));
@@ -275,6 +283,7 @@ void PORTC_IRQHandler(void)
 {
 	if (PORTC->PORT_PCR12 & 1 << 24) /* Bit ISF PTC12 Interrupt detected */
 	{
+		// Ghi 1 vào ISF để xóa cờ ngắt
 		PORTC->PORT_PCR12 |= 1 << 24;
 		if (DisplayMode < 3)
 		{
@@ -338,42 +347,38 @@ void LPIT0_Ch0_IRQHandler(void) /* Time Clock */
 		LPIT->MSR |= 1 << 0;
 		GPIOD->PTOR |= 1 << LED_GREEN;
 
-		if (second < 60)
-		{
+		if (second < 60) {
 			second++;
 		}
-		if (second == 60)
-		{
+		if (second == 60) {
 			second = 0;
 			minute++;
 		}
-		if (minute == 60)
-		{
+		if (minute == 60) {
 			minute = 0;
 			hour++;
 		}
-		if (hour == 24)
-		{
+		if (hour == 24) {
 			hour = 0;
 			day++;
 		}
-		if (day > DayinMonth(month, year))
-		{
+		if (day > DayinMonth(month, year)) {
 			day = 1;
 			month++;
 		}
-		if (month > 12)
-		{
+		if (month > 12) {
 			month = 1;
 			year++;
 		}
 	}
 	// SaveToEEPROM();
 }
+
+// Trigger truyền dữ liệu định kỳ
 void LPIT0_Ch1_IRQHandler(void)
 {
-	if (LPIT->MSR & (1u << 1u))
-	{
+	// Kiểm tra cờ ngắt
+	if (LPIT->MSR & (1u << 1u)) {
 		LPIT->MSR |= (1u << 1u);
 		transmit = 1;
 	}

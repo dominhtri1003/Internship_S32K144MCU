@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module LPUART
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */

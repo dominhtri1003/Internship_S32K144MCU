@@ -188,11 +188,6 @@ void UART1_Interrupt_Config(int Pin, unsigned int BaudRate, unsigned int clock, 
 	/* LPUART Interrupt config */
 	*(volatile uint32_t *)(0xE000E104) |= 1 << 1; /* LPUART1 ID 33 */
 
-	/* Setting Tx/Rx pin */
-	// PCC->PCC_PORTC |= 1<<30; /* Enable clock for port C */
-	// PORTC->PORT_PCR6 |= 2<<8; /* Port C6: MUX = ALT2, UART1 TX */
-	// PORTC->PORT_PCR7 |= 2<<8; /* Port C7: MUX = ALT2, UART1 RX */
-
 	if (Pin == UART1_C7TX_C6RX)
 	{
 		PCC->PCC_PORTC |= 1 << 30;	/* Enable clock for port C */
@@ -214,7 +209,7 @@ void UART1_Interrupt_Config(int Pin, unsigned int BaudRate, unsigned int clock, 
 
 	/* Select source LPUART */
 	PCC->PCC_LPUART1 &= ~(1 << 30); /* Clock disable */
-	PCC->PCC_LPUART1 |= 6 << 24;	/* PCS = 6 SPLLDIV2 */
+	PCC->PCC_LPUART1 |= 6 << 24;	/* PCS = 6 SPLLDIV2 = 36MHz */
 	PCC->PCC_LPUART1 |= (1 << 30);	/* Clock enable */
 
 	/* Setting baud rate */
@@ -222,17 +217,18 @@ void UART1_Interrupt_Config(int Pin, unsigned int BaudRate, unsigned int clock, 
 	uint32_t remain = clock % (BaudRate * 8);
 	for (oversampling = 8; oversampling <= 32; oversampling++)
 	{
-		if ((remain >= clock % (BaudRate * oversampling)) & (clock / (BaudRate * oversampling) <= 8191))
+		if ((remain >= clock % (BaudRate * oversampling)) && (clock / (BaudRate * oversampling) <= 8191))
 		{
 			remain = clock % (BaudRate * oversampling);
 			moduloDivisor = clock / (BaudRate * oversampling);
 			oversamplingRatio = oversampling;
 		}
 	}
+
 	uint32_t BAUD_CONFIG = LPUART1->BAUD;
-	BAUD_CONFIG &= ~(0xFFF << 0);
+	BAUD_CONFIG &= ~(0x1FFF << 0); 		 /* Xóa 13 bits SBR */
 	BAUD_CONFIG |= (moduloDivisor) << 0; /* Modulo divisor */
-	BAUD_CONFIG &= ~(0x1F << 24);
+	BAUD_CONFIG &= ~(0x1F << 24);		 /* Xóa 5 bits Ratio */
 	BAUD_CONFIG |= (oversamplingRatio - 1) << 24; /* Oversampling Ratio = 17 */
 
 	/* Setting frame */

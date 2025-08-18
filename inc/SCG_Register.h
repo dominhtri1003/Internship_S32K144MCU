@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module SCG
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */

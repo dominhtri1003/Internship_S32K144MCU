@@ -4,36 +4,36 @@
 
 void SOSC_INIT_8MHZ(void)
 {
-	/* When System OSC is disabled */
+	/* Disable the System Oscillator (SOSC) to Allow Configuration */
 	uint32_t SOSCCSR_CONFIG = SCG->SCG_SOSCCSR;
-	SOSCCSR_CONFIG &= ~(1<<23);	/* LK = 0: SOSCCSR can be written */
+	SOSCCSR_CONFIG &= ~(1<<23);				/* LK = 0: SOSCCSR can be written */
 	SCG->SCG_SOSCCSR = SOSCCSR_CONFIG;
-	SOSCCSR_CONFIG &= ~(1<<0);			/* SOSCEN = 0: System OSC is disabled */
+	SOSCCSR_CONFIG &= ~(1<<0);				/* SOSCEN = 0: System OSC is disabled */
 	SCG->SCG_SOSCCSR = SOSCCSR_CONFIG;
 	
 	/* SOSCDIV config */
 	uint32_t SOSCDIV_CONFIG = SCG->SCG_SOSCDIV;
 	SOSCDIV_CONFIG &= ~(0x7<<0 | 0x7<<8);
-	SOSCDIV_CONFIG |= (CLOCKDIV_DIV_BY_1<<0 | CLOCKDIV_DIV_BY_1<<8);	/* SOSCDIV1 = SOSCDIV2 = 001: divide by 1 => SOSC_DIV1_CLK = SOSC_DIV2_CLK = 8MHz */
-	SCG->SCG_SOSCDIV = SOSCDIV_CONFIG;
+	SOSCDIV_CONFIG |= (CLOCKDIV_DIV_BY_1<<0 | CLOCKDIV_DIV_BY_1<<8);	/* SOSCDIV1 = SOSCDIV2 = 001: divide by 1  */
+	SCG->SCG_SOSCDIV = SOSCDIV_CONFIG;									/* SOSC_DIV1_CLK = SOSC_DIV2_CLK = 8MHz */
 
 	/* SOSCCFG config */
 	uint32_t SOSCCFG_CONFIG = SCG->SCG_SOSCCFG;
-	SOSCCFG_CONFIG |= 1<<2;			/* EREFS = 1: Internal crystal oscillator of OSC selected */
-	SOSCCFG_CONFIG &= ~(1<<3);	/* HGO = 0: low-gain operation */
+	SOSCCFG_CONFIG |= 1<<2;					/* EREFS = 1: Internal crystal oscillator of OSC selected */
+	SOSCCFG_CONFIG &= ~(1<<3);				/* HGO = 0: low-gain operation */
 	SOSCCFG_CONFIG &= ~(0x3<<4);
-	SOSCCFG_CONFIG |= 2<<4;			/* RANGE = 10: Medium frequency range (1-8MHz) */
+	SOSCCFG_CONFIG |= 2<<4;					/* RANGE = 10: Medium frequency range (1-8MHz) */
 	SCG->SCG_SOSCCFG = SOSCCFG_CONFIG;
 
 	/* SOSCCSR config -> Enable SOSC */
 	SOSCCSR_CONFIG = SCG->SCG_SOSCCSR;
-	SOSCCSR_CONFIG &= ~(1<<23);	/* LK = 0: SOSCCSR can be written */
+	SOSCCSR_CONFIG &= ~(1<<23);				/* LK = 0: SOSCCSR can be written */
 	SCG->SCG_SOSCCSR = SOSCCSR_CONFIG;
-	SOSCCSR_CONFIG &= ~(1<<17);	/* SOSCCMRE = 0: Clock Monitor generates interrupt when error detected */
-	SOSCCSR_CONFIG &= ~(1<<16);	/* SOSCCM = 0: System OSC Clock Monitor is disabled */
-	SOSCCSR_CONFIG |= 1<<0;			/* SOSCEN = 1: System OSC is enabled */
+	SOSCCSR_CONFIG &= ~(1<<17);				/* SOSCCMRE = 0: Clock Monitor generates interrupt when error detected */
+	SOSCCSR_CONFIG &= ~(1<<16);				/* SOSCCM = 0: System OSC Clock Monitor is disabled */
+	SOSCCSR_CONFIG |= 1<<0;					/* SOSCEN = 1: System OSC is enabled */
 	SCG->SCG_SOSCCSR = SOSCCSR_CONFIG;
-	while(!(SCG->SCG_SOSCCSR & 1<<24));	/* Wait for System OSC is enabled and output clock is valid (SOSCVLD = 1) */
+	while(!(SCG->SCG_SOSCCSR & 1<<24));		/* Wait for System OSC is enabled and output clock is valid (SOSCVLD = 1) */
 }
 
 void FIRC_INIT(void)

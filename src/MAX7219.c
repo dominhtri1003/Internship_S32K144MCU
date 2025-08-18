@@ -12,7 +12,7 @@ void MAX7219_Innit(void)
 
 void MAX7219_Display(uint8_t Address, uint8_t Data)
 {
-	uint16_t Data16bit;
+	uint16_t Data16bit = 0;
 	Data16bit = Address << 8 | Data;
 	SPI1_Send(Data16bit);
 }

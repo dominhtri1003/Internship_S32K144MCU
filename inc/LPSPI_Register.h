@@ -7,7 +7,7 @@
 **
 **     Abstract:
 **         Peripheral Access Layer for module LPSPI
-**     Author: PhucToan
+**     Author: MinhTri
 **
 ** ###################################################################
 */
@@ -37,7 +37,7 @@ typedef struct {
   volatile unsigned int DER;
   /* Configuration Register 0 */
   volatile unsigned int CFGR0;
-  /* Configuration Register 1 */
+  /* Configuration Register 1 */ 
   volatile unsigned int CFGR1;
   /* Add the dummy byte data to fulfill struct */
   unsigned int dummy28[2];
