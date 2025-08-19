@@ -184,9 +184,6 @@ void ProcessReceiveData(void)
 
 void ProcessTransmitData(unsigned int hour, unsigned int minute, unsigned int second, unsigned int day, unsigned int month, unsigned int year)
 {
-	char timeString[9];
-	char dateString[11];
-
 	TimeDate_TxBuff[0] = 0xAA;
 	TimeDate_TxBuff[1] = 0x55;
 	TimeDate_TxBuff[2] = 0x01;
@@ -200,32 +197,7 @@ void ProcessTransmitData(unsigned int hour, unsigned int minute, unsigned int se
 	TimeDate_TxBuff[10] = CalculateCheckSum(TimeDate_TxBuff);
 	TimeDate_TxBuff[11] = 0x75;
 
-	timeString[0] = (TimeDate_TxBuff[3] / 10) + '0';
-	timeString[1] = (TimeDate_TxBuff[3] % 10) + '0';
-	timeString[2] = ':';
-	timeString[3] = (TimeDate_TxBuff[4] / 10) + '0';
-	timeString[4] = (TimeDate_TxBuff[4] % 10) + '0';
-	timeString[5] = ':';
-	timeString[6] = (TimeDate_TxBuff[5] / 10) + '0';
-	timeString[7] = (TimeDate_TxBuff[5] % 10) + '0';
-	timeString[8] = '\0';
-
-	dateString[0] = (TimeDate_TxBuff[6] / 10) + '0';
-	dateString[1] = (TimeDate_TxBuff[6] % 10) + '0';
-	dateString[2] = '/';
-	dateString[3] = (TimeDate_TxBuff[7] / 10) + '0';
-	dateString[4] = (TimeDate_TxBuff[7] % 10) + '0';
-	dateString[5] = '/';
-	uint16_t yearfull = TimeDate_TxBuff[8] * 256 + TimeDate_TxBuff[9];
-	dateString[6] = (yearfull / 1000) + '0';
-	dateString[7] = ((yearfull / 100) % 10) + '0';
-	dateString[8] = ((yearfull / 10) % 10) + '0';
-	dateString[9] = (yearfull % 10) + '0';
-	dateString[10] = '\0';
-
-	UART1_SendString(timeString);
-	UART1_SendChar('\n');
-	UART1_SendString(dateString);
+	UART1_SendString(TimeDate_TxBuff);
 	UART1_SendChar('\n');
 }
 
@@ -371,7 +343,6 @@ void LPIT0_Ch0_IRQHandler(void) /* Time Clock */
 			year++;
 		}
 	}
-	// SaveToEEPROM();
 }
 
 // Trigger truyền dữ liệu định kỳ
